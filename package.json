@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "dev": "next dev",
+    "dev": "next dev --experimental-https",
     "start": "next start",
     "seed": "node -r dotenv/config ./scripts/seed.js",
     "lint": "next lint"
