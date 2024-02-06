@@ -55,7 +55,7 @@ export default function Form() {
               <input
                 id="email"
                 name="email"
-                type="text"
+                type="email"
                 placeholder="Enter Email"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                 aria-describedby='email-error'
