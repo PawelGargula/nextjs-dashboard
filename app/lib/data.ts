@@ -7,6 +7,7 @@ import {
   LatestInvoiceRaw,
   User,
   Revenue,
+  CustomerForm,
 } from './definitions';
 import { formatCurrency } from './utils';
 import { unstable_noStore as noStore } from 'next/cache';
@@ -247,6 +248,27 @@ export async function fetchCustomersPages(query: string) {
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch total number of customers.');
+  }
+}
+
+export async function fetchCustomerById(id: string) {
+  noStore();
+  try {
+    const data = await sql<CustomerForm>`
+      SELECT
+        id,
+        name,
+        email
+      FROM customers
+      WHERE id = ${id};
+    `;
+
+    const customer = data.rows;
+
+    return customer[0];
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch customer.');
   }
 }
 

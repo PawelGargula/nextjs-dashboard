@@ -186,7 +186,51 @@ export async function createCustomer(prevState: CustomerState, formData: FormDat
     };
   }
  
-  // Revalidate the cache for the invoices page and redirect the user.
+  // Revalidate the cache for the customers page and redirect the user.
+  revalidatePath('/dashboard/customers');
+  redirect('/dashboard/customers');
+}
+
+export async function updateCustomer(id: string, prevState: CustomerState, formData: FormData) {
+  // Validate form using Zod
+  const validatedFields = UpdateCustomer.safeParse({
+    name: formData.get('name'),
+    email: formData.get('email'),
+  });
+ 
+  // If form validation fails, return errors early. Otherwise, continue.
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Missing Fields. Failed to Create Customer.',
+    };
+  }
+ 
+  const { name, email } = validatedFields.data;
+
+  // Custom validation
+  if (!await isEmailUnique(email, id)) {
+    return {
+      errors: {
+        email: ["Email is already is use."]
+      },
+      message: 'Missing Fields. Failed to Create Customer.',
+    };
+  }
+ 
+  // Insert data into the database
+  try {
+    await sql`
+        UPDATE customers
+        SET name = ${name}, email = ${email}
+        WHERE id = ${id}
+      `;
+  } catch (error) {
+    // If a database error occurs, return a more specific error.
+    return { message: 'Database Error: Failed to Update Customer.' };
+  }
+ 
+  // Revalidate the cache for the customers page and redirect the user.
   revalidatePath('/dashboard/customers');
   redirect('/dashboard/customers');
 }
